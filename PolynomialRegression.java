@@ -13,7 +13,7 @@ public class PolynomialRegression extends Regression {
     }
 
     public void fit() {
-        // Lógica para ajustar el modelo polinómico del grado especificado
+
         int n = stats.count();
         double[] sumPowers = new double[2 * degree + 1];
         double[] sumPowersY = new double[degree + 1];

@@ -10,7 +10,10 @@ public class PolynomialAgent extends OneShotBehaviour {
     @Override
     public void action() {
         polynomial.fit();
-
+        System.out.println("_____________________________________________");
+        System.out.println("CUADRATICA 2");
+        System.out.println("CUBICA 3");
+        System.out.println("___________________________________");
         System.out.println("\n\n\nREGRESION POLINOMIAL DE GRADO " + polynomial.getDegree() + ":");
         System.out.println("___________________________________");
         System.out.println(polynomial.getEquation());
@@ -31,5 +34,6 @@ public class PolynomialAgent extends OneShotBehaviour {
         System.out.printf("R^2 (PORCENTAJE): %.2f%%%n", r2 * 100);
         System.out.println("_____________________________________________");
         System.out.println("FINALIZACION");
+        System.out.println("_____________________________________________");
     }
 }
