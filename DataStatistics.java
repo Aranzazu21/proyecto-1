@@ -37,13 +37,14 @@ public class DataStatistics {
         return sum;
     }
 
-    public double sumY2() { // Suma de cuadrados de Y
+    public double sumY2() {
         double sum = 0;
         for (DataPoint point : dataPoints) {
             sum += point.getY() * point.getY();
         }
         return sum;
     }
+
     public int count() {
         return dataPoints.length;
     }
@@ -55,4 +56,5 @@ public class DataStatistics {
     public double meanY() {
         return sumY() / count();
     }
+
 }

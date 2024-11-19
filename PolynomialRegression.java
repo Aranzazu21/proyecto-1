@@ -5,15 +5,20 @@ public class PolynomialRegression extends Regression {
     public PolynomialRegression(DataSet dataSet, int degree) {
         super(dataSet);
         this.degree = degree;
-        coefficients = new double[degree + 1];
+        this.coefficients = new double[degree + 1];
     }
 
-    public int getDegree() {
-        return degree;
+    @Override
+    public double predict(double x) {
+        double y = 0;
+        for (int i = 0; i <= degree; i++) {
+            y += coefficients[i] * Math.pow(x, i);
+        }
+        return y;
     }
 
+    @Override
     public void fit() {
-
         int n = stats.count();
         double[] sumPowers = new double[2 * degree + 1];
         double[] sumPowersY = new double[degree + 1];
@@ -66,14 +71,6 @@ public class PolynomialRegression extends Regression {
     }
 
     @Override
-    public double predict(double x) {
-        double y = 0;
-        for (int i = 0; i <= degree; i++) {
-            y += coefficients[i] * Math.pow(x, i);
-        }
-        return y;
-    }
-
     public String getEquation() {
         StringBuilder equation = new StringBuilder("y = ");
         for (int i = 0; i <= degree; i++) {

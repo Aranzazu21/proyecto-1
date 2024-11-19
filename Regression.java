@@ -1,5 +1,5 @@
 public abstract class Regression {
-    protected DataStatistics stats;
+    protected final DataStatistics stats;
 
     public Regression(DataSet dataSet) {
         this.stats = new DataStatistics(dataSet);
@@ -7,6 +7,9 @@ public abstract class Regression {
 
     public abstract double predict(double x);
 
+    public abstract void fit();
+
+    public abstract String getEquation();
 
     public double calculateR2() {
         double sumSquaredError = 0;
@@ -22,9 +25,11 @@ public abstract class Regression {
         return 1 - (sumSquaredError / sumTotalSquared);
     }
 
-    //  calcular la correlación r
+
     public double getCorrelation() {
         int n = stats.count();
+        if (n == 0) return 0;
+
         double sumX = stats.sumX();
         double sumY = stats.sumY();
         double sumXY = stats.sumXY();
@@ -37,18 +42,15 @@ public abstract class Regression {
         return (denominator == 0) ? 0 : numerator / denominator;
     }
 
-    //  error estándar de la pendiente (beta 1)
     public double getSESlope() {
         return Math.sqrt(calculateMSE() / (stats.count() * (stats.sumX2() - Math.pow(stats.sumX(), 2) / stats.count())));
     }
 
-    //  error estándar del intercepto (beta 0)
     public double getSEIntercept(double slope) {
         return Math.sqrt(calculateMSE() * (1.0 / stats.count() +
                 Math.pow(stats.sumX() / stats.count() - slope, 2) / stats.sumX2()));
     }
 
-    //  error cuadrático medio (MSE)
     protected double calculateMSE() {
         double mse = 0;
         for (DataPoint point : stats.getDataPoints()) {
@@ -58,4 +60,3 @@ public abstract class Regression {
         return mse / stats.count();
     }
 }
-
