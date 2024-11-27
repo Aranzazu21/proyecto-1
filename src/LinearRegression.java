@@ -1,28 +1,59 @@
-public class LinearRegression {
-    private double slope; //(B1)
-    private double intercept; //(B0)
-    private DataStatistics stats;
+public class LinearRegression extends Regression {
+    private double slope;
+    private double intercept;
 
     public LinearRegression(DataSet dataSet) {
-        stats = new DataStatistics(dataSet);
+        super(dataSet);
     }
 
+    @Override
     public void fit() {
         int n = stats.count();
-        double sumX = stats.sumX();
-        double sumY = stats.sumY();
-        double sumXY = stats.sumXY();
-        double sumX2 = stats.sumX2();
+        if (n < 2) {
+            throw new IllegalArgumentException("NO TIENES SUFICIENTES DATOS.");
+        }
 
-        slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX); // Calcula la pendiente.
-        intercept = (sumY - slope * sumX) / n;
+        double sumAdvertising = stats.sumAdvertising();
+        double sumSales = stats.sumSales();
+        double sumAdvertisingSales = stats.sumAdvertisingSales();
+        double sumAdvertisingSquared = stats.sumAdvertisingSquared();
+
+
+        slope = (n * sumAdvertisingSales - sumAdvertising * sumSales) / (n * sumAdvertisingSquared - Math.pow(sumAdvertising, 2));
+
+
+        intercept = (sumSales - slope * sumAdvertising) / n;
+    }
+    public void fitWithParameters(double[] parameters) {
+        this.intercept = parameters[0];
+        this.slope = parameters[1];
+    }
+    @Override
+    public double predict(double advertising) {
+        return intercept + slope * advertising;
     }
 
-    public double predict(double x) {
-        return intercept + slope * x;
-    }
-
+    @Override
     public String getEquation() {
-        return String.format("y = %.2f + %.2f * x", intercept, slope);
+        return String.format("sales = %.2f + %.2f * advertising", intercept, slope);
+    }
+
+    public double getIntercept() {
+        return intercept;
+    }
+
+    public double getSlope() {
+        return slope;
+    }
+
+
+    public double getSESlope() {
+        return Math.sqrt(calculateMSE() / (stats.count() * (stats.sumAdvertisingSquared() - Math.pow(stats.sumAdvertising(), 2) / stats.count())));
+    }
+
+
+    public double getSEIntercept(double slope) {
+        return Math.sqrt(calculateMSE() * (1.0 / stats.count() +
+                Math.pow(stats.sumAdvertising() / stats.count() - slope, 2) / stats.sumAdvertisingSquared()));
     }
 }

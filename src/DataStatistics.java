@@ -2,46 +2,58 @@ public class DataStatistics {
     private final DataPoint[] dataPoints;
 
     public DataStatistics(DataSet dataSet) {
-        this.dataPoints = dataSet.getDataPoints(); // Obtiene los puntos de datos del conjunto
+        this.dataPoints = dataSet.getDataPoints();
     }
 
-    public double sumX() {
+    public double sumAdvertising() {
         double sum = 0;
         for (DataPoint point : dataPoints) {
-            sum += point.getX(); // Suma todos los valores de X (publicidad)
+            sum += point.getAdvertising();
         }
-        return sum; // Devuelve la suma total de X
+        return sum;
     }
 
-    public double sumY() {
+    public double sumSales() {
         double sum = 0;
         for (DataPoint point : dataPoints) {
-            sum += point.getY(); // Suma todos los valores de Y (ventas)
+            sum += point.getSales();
         }
-        return sum; // Devuelve la suma total de Y
+        return sum;
+    }
+
+    public double sumAdvertisingSales() {
+        double sum = 0;
+        for (DataPoint point : dataPoints) {
+            sum += point.getAdvertising() * point.getSales();
+        }
+        return sum;
+    }
+
+    public double sumAdvertisingSquared() {
+        double sum = 0;
+        for (DataPoint point : dataPoints) {
+            sum += point.getAdvertising() * point.getAdvertising();
+        }
+        return sum;
+    }
+
+    public double sumSalesSquared() {
+        double sum = 0;
+        for (DataPoint point : dataPoints) {
+            sum += point.getSales() * point.getSales();
+        }
+        return sum;
     }
 
     public int count() {
-        return dataPoints.length; // Devuelve el número total de puntos de datos
+        return dataPoints.length;
     }
 
-    public double sumXY() {
-        double sum = 0;
-        for (DataPoint point : dataPoints) {
-            sum += point.getX() * point.getY(); // Suma del producto XY
-        }
-        return sum; // Devuelve la suma total del producto XY
+    public DataPoint[] getDataPoints() {
+        return dataPoints;
     }
 
-    public double sumX2() {
-        double sum = 0;
-        for (DataPoint point : dataPoints) {
-            sum += point.getX() * point.getX(); // Suma de los cuadrados de X
-        }
-        return sum; // Devuelve la suma total de X^2
-    }
-
-    public DataPoint[] getDataPoints() { //
-        return dataPoints; // Devuelve todos los puntos de datos
+    public double meanSales() {
+        return sumSales() / count();
     }
 }

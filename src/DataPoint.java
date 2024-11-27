@@ -1,17 +1,24 @@
 public class DataPoint {
-    private double x; // Publicidad
-    private double y; // Ventas
-    
-    public DataPoint(double x, double y) {
-        this.x = x;
-        this.y = y;
+    private double advertising;
+    private double sales;
+    private int year;
+
+
+    public DataPoint(double advertising, double sales, int year) {
+        this.advertising = advertising;
+        this.sales = sales;
+        this.year = year;
     }
 
-    public double getX() {
-        return x;
+    public double getAdvertising() {
+        return advertising;
     }
 
-    public double getY() {
-        return y;
+    public double getSales() {
+        return sales;
+    }
+
+    public int getYear() {
+        return year;
     }
 }

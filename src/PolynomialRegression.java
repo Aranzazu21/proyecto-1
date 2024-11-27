@@ -1,38 +1,88 @@
-public class PolynomialRegression {
+public class PolynomialRegression extends Regression {
     private double[] coefficients;
-    private DataStatistics stats;
+    private int degree;
 
-    public PolynomialRegression(DataSet dataSet) {
-        stats = new DataStatistics(dataSet);
+    public PolynomialRegression(DataSet dataSet, int degree) {
+        super(dataSet);
+        this.degree = degree;
+        this.coefficients = new double[degree + 1];
     }
 
+    @Override
+    public double predict(double advertising) {
+        double sales = 0;
+        for (int i = 0; i <= degree; i++) {
+            sales += coefficients[i] * Math.pow(advertising, i);
+        }
+        return sales;
+    }
+
+    @Override
     public void fit() {
         int n = stats.count();
-
-        coefficients = new double[3];
+        double[] sumPowers = new double[2 * degree + 1];
+        double[] sumPowersSales = new double[degree + 1];
 
         for (DataPoint point : stats.getDataPoints()) {
-            double x = point.getX();
-            coefficients[0] += point.getY();
-            coefficients[1] += point.getY() * x;
-            coefficients[2] += point.getY() * Math.pow(x, 2);
+            double advertising = point.getAdvertising();
+            double sales = point.getSales();
+            for (int i = 0; i <= 2 * degree; i++) {
+                sumPowers[i] += Math.pow(advertising, i);
+            }
+            for (int i = 0; i <= degree; i++) {
+                sumPowersSales[i] += sales * Math.pow(advertising, i);
+            }
         }
 
-        // Promedia los coeficientes dividiendo por el número total de puntos.
-        coefficients[0] /= n; //  constante.
-        coefficients[1] /= n; //  lineal.
-        coefficients[2] /= n; //  cuadrático.
+        double[][] matrix = new double[degree + 1][degree + 1];
+        double[] results = new double[degree + 1];
+
+        for (int i = 0; i <= degree; i++) {
+            for (int j = 0; j <= degree; j++) {
+                matrix[i][j] = sumPowers[i + j];
+            }
+            results[i] = sumPowersSales[i];
+        }
+
+        coefficients = solveSystem(matrix, results);
     }
 
-    // para predecir el valor de y dado un valor de x
-    public double predict(double x) {
-        return coefficients[0] + coefficients[1] * x + coefficients[2] * Math.pow(x, 2);
-        // Calcula con formula polinomio: y = a + b*x + c*x^2
+
+    private double[] solveSystem(double[][] matrix, double[] results) {
+        int n = matrix.length;
+        for (int i = 0; i < n; i++) {
+            for (int j = i + 1; j < n; j++) {
+                double ratio = matrix[j][i] / matrix[i][i];
+                for (int k = i; k < n; k++) {
+                    matrix[j][k] -= ratio * matrix[i][k];
+                }
+                results[j] -= ratio * results[i];
+            }
+        }
+
+        double[] coefficients = new double[n];
+        for (int i = n - 1; i >= 0; i--) {
+            coefficients[i] = results[i];
+            for (int j = i + 1; j < n; j++) {
+                coefficients[i] -= matrix[i][j] * coefficients[j];
+            }
+            coefficients[i] /= matrix[i][i];
+        }
+        return coefficients;
     }
 
+    @Override
     public String getEquation() {
-        return String.format("y = %.2f + %.2f * x + %.2f * x^2",
-                coefficients[0], coefficients[1], coefficients[2]);
-
+        StringBuilder equation = new StringBuilder("sales = ");
+        for (int i = 0; i <= degree; i++) {
+            equation.append(String.format("%.2f", coefficients[i]));
+            if (i > 0) {
+                equation.append(" * advertising^").append(i);
+            }
+            if (i < degree) {
+                equation.append(" + ");
+            }
+        }
+        return equation.toString();
     }
 }
