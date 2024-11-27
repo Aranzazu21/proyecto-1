@@ -5,24 +5,25 @@ public abstract class Regression {
         this.stats = new DataStatistics(dataSet);
     }
 
-    public abstract double predict(double x);
+    public abstract double predict(double advertising);
 
     public abstract void fit();
 
     public abstract String getEquation();
 
+
     public double calculateR2() {
         double sumSquaredError = 0;
         double sumTotalSquared = 0;
-        double meanY = stats.meanY();
+        double meanSales = stats.meanSales();
 
         for (DataPoint point : stats.getDataPoints()) {
-            double prediction = predict(point.getX());
-            sumSquaredError += Math.pow(prediction - point.getY(), 2);
-            sumTotalSquared += Math.pow(point.getY() - meanY, 2);
+            double prediction = predict(point.getAdvertising());
+            sumSquaredError += Math.pow(prediction - point.getSales(), 2);
+            sumTotalSquared += Math.pow(point.getSales() - meanSales, 2);
         }
 
-        return 1 - (sumSquaredError / sumTotalSquared);
+        return (sumTotalSquared == 0) ? 0 : 1 - (sumSquaredError / sumTotalSquared);
     }
 
 
@@ -30,32 +31,45 @@ public abstract class Regression {
         int n = stats.count();
         if (n == 0) return 0;
 
-        double sumX = stats.sumX();
-        double sumY = stats.sumY();
-        double sumXY = stats.sumXY();
-        double sumX2 = stats.sumX2();
-        double sumY2 = stats.sumY2();
+        double sumAdvertising = stats.sumAdvertising();
+        double sumSales = stats.sumSales();
+        double sumAdvertisingSales = stats.sumAdvertisingSales();
+        double sumAdvertisingSquared = stats.sumAdvertisingSquared();
+        double sumSalesSquared = stats.sumSalesSquared();
 
-        double numerator = (n * sumXY - sumX * sumY);
-        double denominator = Math.sqrt((n * sumX2 - Math.pow(sumX, 2)) * (n * sumY2 - Math.pow(sumY, 2)));
+        double numerator = (n * sumAdvertisingSales - sumAdvertising * sumSales);
+        double denominator = Math.sqrt((n * sumAdvertisingSquared - Math.pow(sumAdvertising, 2)) *
+                (n * sumSalesSquared - Math.pow(sumSales, 2)));
 
         return (denominator == 0) ? 0 : numerator / denominator;
     }
 
+
     public double getSESlope() {
-        return Math.sqrt(calculateMSE() / (stats.count() * (stats.sumX2() - Math.pow(stats.sumX(), 2) / stats.count())));
+        int n = stats.count();
+        double meanAdvertising = stats.sumAdvertising() / n;
+        double sumSquaredDifferences = stats.sumAdvertisingSquared() - Math.pow(stats.sumAdvertising(), 2) / n;
+
+        return Math.sqrt(calculateMSE() / sumSquaredDifferences);
     }
 
+
     public double getSEIntercept(double slope) {
-        return Math.sqrt(calculateMSE() * (1.0 / stats.count() +
-                Math.pow(stats.sumX() / stats.count() - slope, 2) / stats.sumX2()));
+        int n = stats.count();
+        double meanAdvertising = stats.sumAdvertising() / n;
+
+        double term = (1.0 / n) + (Math.pow(meanAdvertising, 2) /
+                (stats.sumAdvertisingSquared() - Math.pow(stats.sumAdvertising(), 2) / n));
+
+        return Math.sqrt(calculateMSE() * term);
     }
+
 
     protected double calculateMSE() {
         double mse = 0;
         for (DataPoint point : stats.getDataPoints()) {
-            double predicted = predict(point.getX());
-            mse += Math.pow(predicted - point.getY(), 2);
+            double predicted = predict(point.getAdvertising());
+            mse += Math.pow(predicted - point.getSales(), 2);
         }
         return mse / stats.count();
     }

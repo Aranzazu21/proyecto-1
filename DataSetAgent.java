@@ -7,8 +7,7 @@ public class DataSetAgent extends Agent {
 
     public DataSetAgent() {
         this.dataSets = new DataSet[] {
-                new DataSet(),   // Conjunto de datos original
-
+                new DataSet(),
         };
     }
 
@@ -38,10 +37,13 @@ public class DataSetAgent extends Agent {
 
 
         regressionBehaviours.addSubBehaviour(new LinearRegressionAgent(new LinearRegression(dataSet)));
+
+
+        regressionBehaviours.addSubBehaviour(new MultipleRegressionBehaviour(dataSet));
+
         regressionBehaviours.addSubBehaviour(new QuadraticAgent(new PolynomialRegression(dataSet, 2)));
         regressionBehaviours.addSubBehaviour(new CubicAgent(new PolynomialRegression(dataSet, 3)));
 
         addBehaviour(regressionBehaviours);
     }
 }
-

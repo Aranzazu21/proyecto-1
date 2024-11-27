@@ -5,42 +5,42 @@ public class DataStatistics {
         this.dataPoints = dataSet.getDataPoints();
     }
 
-    public double sumX() {
+    public double sumAdvertising() {
         double sum = 0;
         for (DataPoint point : dataPoints) {
-            sum += point.getX();
+            sum += point.getAdvertising();
         }
         return sum;
     }
 
-    public double sumY() {
+    public double sumSales() {
         double sum = 0;
         for (DataPoint point : dataPoints) {
-            sum += point.getY();
+            sum += point.getSales();
         }
         return sum;
     }
 
-    public double sumXY() {
+    public double sumAdvertisingSales() {
         double sum = 0;
         for (DataPoint point : dataPoints) {
-            sum += point.getX() * point.getY();
+            sum += point.getAdvertising() * point.getSales();
         }
         return sum;
     }
 
-    public double sumX2() {
+    public double sumAdvertisingSquared() {
         double sum = 0;
         for (DataPoint point : dataPoints) {
-            sum += point.getX() * point.getX();
+            sum += point.getAdvertising() * point.getAdvertising();
         }
         return sum;
     }
 
-    public double sumY2() {
+    public double sumSalesSquared() {
         double sum = 0;
         for (DataPoint point : dataPoints) {
-            sum += point.getY() * point.getY();
+            sum += point.getSales() * point.getSales();
         }
         return sum;
     }
@@ -53,8 +53,7 @@ public class DataStatistics {
         return dataPoints;
     }
 
-    public double meanY() {
-        return sumY() / count();
+    public double meanSales() {
+        return sumSales() / count();
     }
-
 }

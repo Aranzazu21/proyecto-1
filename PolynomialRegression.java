@@ -9,28 +9,28 @@ public class PolynomialRegression extends Regression {
     }
 
     @Override
-    public double predict(double x) {
-        double y = 0;
+    public double predict(double advertising) {
+        double sales = 0;
         for (int i = 0; i <= degree; i++) {
-            y += coefficients[i] * Math.pow(x, i);
+            sales += coefficients[i] * Math.pow(advertising, i);
         }
-        return y;
+        return sales;
     }
 
     @Override
     public void fit() {
         int n = stats.count();
         double[] sumPowers = new double[2 * degree + 1];
-        double[] sumPowersY = new double[degree + 1];
+        double[] sumPowersSales = new double[degree + 1];
 
         for (DataPoint point : stats.getDataPoints()) {
-            double x = point.getX();
-            double y = point.getY();
+            double advertising = point.getAdvertising();
+            double sales = point.getSales();
             for (int i = 0; i <= 2 * degree; i++) {
-                sumPowers[i] += Math.pow(x, i);
+                sumPowers[i] += Math.pow(advertising, i);
             }
             for (int i = 0; i <= degree; i++) {
-                sumPowersY[i] += y * Math.pow(x, i);
+                sumPowersSales[i] += sales * Math.pow(advertising, i);
             }
         }
 
@@ -41,11 +41,12 @@ public class PolynomialRegression extends Regression {
             for (int j = 0; j <= degree; j++) {
                 matrix[i][j] = sumPowers[i + j];
             }
-            results[i] = sumPowersY[i];
+            results[i] = sumPowersSales[i];
         }
 
         coefficients = solveSystem(matrix, results);
     }
+
 
     private double[] solveSystem(double[][] matrix, double[] results) {
         int n = matrix.length;
@@ -72,11 +73,11 @@ public class PolynomialRegression extends Regression {
 
     @Override
     public String getEquation() {
-        StringBuilder equation = new StringBuilder("y = ");
+        StringBuilder equation = new StringBuilder("sales = ");
         for (int i = 0; i <= degree; i++) {
             equation.append(String.format("%.2f", coefficients[i]));
             if (i > 0) {
-                equation.append(" * x^").append(i);
+                equation.append(" * advertising^").append(i);
             }
             if (i < degree) {
                 equation.append(" + ");

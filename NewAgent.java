@@ -20,8 +20,10 @@ public class NewAgent extends Agent {
                 try{
                     AgentContainer container= getContainerController();
 
+
                     AgentController classificationAgent= container.createNewAgent("ClassificationAgent", "ClassificationAgent", null);
                     classificationAgent.start();
+
 
                     AgentController dataSetAgent= container.createNewAgent("DataSetAgent", "DataSetAgent", null);
                     dataSetAgent.start();
